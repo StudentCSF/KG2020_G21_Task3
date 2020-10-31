@@ -5,7 +5,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class DrawPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 
@@ -32,20 +34,55 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         gr.fillRect(0, 0, getWidth(), getHeight());
         gr.dispose();
         PixelDrawer pd = new BufferedImagePixelDrawer(bi);
-        LineDrawer ld = new DDALineDrawer(pd);
-        //CurvedLineDrawer bcld = new BezierCurvedLineDrawer(pd);
-        //CurvedLineDrawer hcld = new HermiteCurvedLineDrawer(pd);
+        DDALineDrawer ld = new DDALineDrawer(pd);
+        CurvedLineDrawer bcld = new BezierCurvedLineDrawer(pd);
+        //HermiteCurvedLineDrawer hcld = new HermiteCurvedLineDrawer(pd);
         //Line l1 = new Line(0, 0, 4, 6);
         //Line l2 = new Line(4, 7, 2, -9);
-        CurvedLine cl = new CurvedLine(new RealPoint(0, 0), new RealPoint(4, 6), new RealPoint(4, 7), new RealPoint(2, -9));
-        ld.drawBezierCurvedLine(sc.r2s(cl.getP1()), sc.r2s(cl.getP2()), sc.r2s(cl.getP3()), sc.r2s(cl.getP4()));
+        CurvedLine cl = new CurvedLine(new ArrayList<>(Arrays.asList(new BasicRealPoint(0, 0), new SecondaryRealPoint(1, 1), new SecondaryRealPoint(2, 0), new BasicRealPoint(2, -1))));
+        //ld.drawBezierCurvedLine(new ScreenPoint(0, 0), new ScreenPoint(1, 1), new ScreenPoint(1, 2), new ScreenPoint(2, -2));
+        //bcld.drawLine(sc.r2s(cl.getP1()), sc.r2s(cl.getP2()), sc.r2s(cl.getP3()), sc.r2s(cl.getP4()));
         //bcld.drawLine(sc.r2s(cl.getP1()), sc.r2s(cl.getP2()), sc.r2s(cl.getP3()), sc.r2s(cl.getP4()));
         //hcld.drawLine(sc.r2s(cl.getP1()), sc.r2s(cl.getP2()), sc.r2s(cl.getP3()), sc.r2s(cl.getP4()));
-        //drawAll(ld, cld);
+        //drawAll(ld);
+        //drawCurve(pd);
+        drawCurve(cl, sc, bcld);
         g.drawImage(bi, 0, 0, null);
     }
 
-    private void drawAll(LineDrawer ld, CurvedLineDrawer cld) {
+    private void drawCurve(PixelDrawer pd) {
+        Random rnd = new Random();
+        CurvedLineDrawer bcld = new BezierCurvedLineDrawer(pd);
+        List<RealPoint> l = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            if (i == 0 || (i + 1) %  4 == 0) {
+                BasicRealPoint p = new BasicRealPoint(rnd.nextInt(10), rnd.nextInt(10));
+                l.add(p);
+            } else {
+                SecondaryRealPoint p = new SecondaryRealPoint(rnd.nextInt(10), rnd.nextInt(10));
+                l.add(p);
+            }
+        }
+        CurvedLine cl = new CurvedLine(l);
+        drawCurve(cl, sc, bcld);
+    }
+
+    private void drawCurve(CurvedLine l, ScreenConverter sc, CurvedLineDrawer cld) {
+        List<ScreenPoint> screenPointList = new ArrayList<>();
+        for (int i = 0; i < l.getPoints().size(); i++) {
+            boolean isBasic = l.getPoints().get(i) instanceof BasicRealPoint;
+            ScreenPoint sp = sc.r2s(l.getPoints().get(i));
+            if (isBasic) {
+                sp = new BasicScreenPoint(sp.getX(), sp.getY());
+            } else {
+                sp = new SecondaryScreenPoint(sp.getX(), sp.getY());;
+            }
+            screenPointList.add(sp);
+        }
+        cld.drawCurvedLine(screenPointList);
+    }
+
+    private void drawAll(LineDrawer ld) {
         drawLine(ld, axisX);
         drawLine(ld, axisY);
         //cld.drawLine(new ScreenPoint(110, 110), new ScreenPoint(50, 50), new ScreenPoint(50, 50), new ScreenPoint(310, 110));
@@ -62,7 +99,7 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
     private ScreenPoint lastPosition = null;
 
     @Override
-    public void mouseClicked(MouseEvent mouseEvent) {
+    public void mouseClicked(MouseEvent e) {
 
     }
 
@@ -92,12 +129,12 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
     }
 
     @Override
-    public void mouseEntered(MouseEvent mouseEvent) {
+    public void mouseEntered(MouseEvent e) {
 
     }
 
     @Override
-    public void mouseExited(MouseEvent mouseEvent) {
+    public void mouseExited(MouseEvent e) {
 
     }
 
@@ -120,7 +157,7 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
     }
 
     @Override
-    public void mouseMoved(MouseEvent mouseEvent) {
+    public void mouseMoved(MouseEvent e) {
 
     }
 

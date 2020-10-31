@@ -1,6 +1,7 @@
-/*package course2.kg.task3;
+package course2.kg.task3;
 
 import java.awt.*;
+import java.util.List;
 
 public class HermiteCurvedLineDrawer implements CurvedLineDrawer {
     private PixelDrawer pd;
@@ -14,7 +15,7 @@ public class HermiteCurvedLineDrawer implements CurvedLineDrawer {
         this.step = step;
     }
 
-    @Override
+    //@Override
     public void drawLine(ScreenPoint p1, ScreenPoint p2, ScreenPoint p3, ScreenPoint p4) {
         for (double t = 0; t <= 1; t += step) {
             double st = t * t;
@@ -24,4 +25,14 @@ public class HermiteCurvedLineDrawer implements CurvedLineDrawer {
             pd.colorPixel((int) x, (int) y, Color.BLACK);
         }
     }
-}*/
+
+    @Override
+    public void drawCurvedLine(List<ScreenPoint> l) {
+
+    }
+
+    @Override
+    public void drawCurvedLine(List<ScreenPoint> l, Color color) {
+
+    }
+}

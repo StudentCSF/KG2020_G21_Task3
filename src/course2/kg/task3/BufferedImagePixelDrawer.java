@@ -10,11 +10,15 @@ public class BufferedImagePixelDrawer implements PixelDrawer {
     {
         this.bi=bi;
     }
+
     @Override
     public void colorPixel(int x, int y, Color c) {
         if(x>=0 && y>=0 && x<bi.getWidth() && y<bi.getHeight())
         bi.setRGB(x,y,c.getRGB());
     }
 
-
+    @Override
+    public void colorPixel(int x, int y) {
+        colorPixel(x, y, Color.BLACK);
+    }
 }

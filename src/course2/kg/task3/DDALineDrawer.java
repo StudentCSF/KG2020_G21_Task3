@@ -48,12 +48,12 @@ public class DDALineDrawer implements LineDrawer {
             }
         }
 
-    @Override
+
     public void drawBezierCurvedLine(ScreenPoint p1, ScreenPoint p2, ScreenPoint p3, ScreenPoint p4) {
         List<ScreenPoint> points = pointsForBezier(p1, p2, p3, p4);
         for (int i = 1; i < points.size(); i++) {
-            drawLine(points.get(i - 1), points.get(i));
-            //pd.colorPixel(points.get(i).getX(), points.get(i).getY(), Color.BLACK);
+            //drawLine(points.get(i - 1), points.get(i));
+            pd.colorPixel(points.get(i).getX(), points.get(i).getY(), Color.BLACK);
         }
     }
 
@@ -62,7 +62,8 @@ public class DDALineDrawer implements LineDrawer {
         for (double t = 0; t <= 1; t += 0.00001) {
             double x = Math.pow(1 - t, 3) * p1.getX() + 3 * Math.pow(1 - t, 2) * t * p2.getX() + 3 * (1 - t) * t * t * p3.getX() + t * t * t * p4.getX();
             double y = Math.pow(1 - t, 3) * p1.getY() + 3 * Math.pow(1 - t, 2) * t * p2.getY() + 3 * (1 - t) * t * t * p3.getY() + t * t * t * p4.getY();
-            list.add(new ScreenPoint((int)x, (int)y));
+            System.out.println(x + " " + y);
+            list.add(new ScreenPoint((int) x, (int) y));
         }
         return list;
     }
