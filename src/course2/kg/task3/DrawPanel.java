@@ -39,7 +39,7 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         //HermiteCurvedLineDrawer hcld = new HermiteCurvedLineDrawer(pd);
         //Line l1 = new Line(0, 0, 4, 6);
         //Line l2 = new Line(4, 7, 2, -9);
-        CurvedLine cl = new CurvedLine(new ArrayList<>(Arrays.asList(new BasicRealPoint(0, 0), new SecondaryRealPoint(1, 1), new SecondaryRealPoint(2, 0), new BasicRealPoint(2, -1))));
+        CurvedLine cl = new CurvedLine(new ArrayList<>(Arrays.asList(new BasicRealPoint(0, 0), new SecondaryRealPoint(1, 1), new SecondaryRealPoint(2, 0), new BasicRealPoint(2, -1), new SecondaryRealPoint(3, 0), new SecondaryRealPoint(4, -1), new BasicRealPoint(5, 2))));
         //ld.drawBezierCurvedLine(new ScreenPoint(0, 0), new ScreenPoint(1, 1), new ScreenPoint(1, 2), new ScreenPoint(2, -2));
         //bcld.drawLine(sc.r2s(cl.getP1()), sc.r2s(cl.getP2()), sc.r2s(cl.getP3()), sc.r2s(cl.getP4()));
         //bcld.drawLine(sc.r2s(cl.getP1()), sc.r2s(cl.getP2()), sc.r2s(cl.getP3()), sc.r2s(cl.getP4()));

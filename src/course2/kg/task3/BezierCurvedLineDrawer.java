@@ -23,10 +23,10 @@ public class BezierCurvedLineDrawer implements CurvedLineDrawer {
             pointsForFragment.add(curr);
             if (curr instanceof BasicScreenPoint && pointsForFragment.size() > 1) {
                 drawFragmentCurvedLine(pointsForFragment, color);
-            }
-            if (l.indexOf(curr) == l.size() - 1) {
-                pointsForFragment = new ArrayList<>();
-                pointsForFragment.add(curr);
+                if (l.indexOf(curr) != l.size() - 1) {
+                    pointsForFragment = new ArrayList<>();
+                    pointsForFragment.add(curr);
+                }
             }
         }
     }
