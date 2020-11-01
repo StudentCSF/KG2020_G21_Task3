@@ -130,16 +130,20 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         RealPoint p = sc.s2r(new ScreenPoint(e.getX(), e.getY()));
         if (e.getButton() == MouseEvent.BUTTON1) {
             p = new BasicRealPoint(p.getX(), p.getY());
+            if (curve == null) {
+                curve = new CurvedLine(new ArrayList<>());
+            }
+            curve.getAllPoints().add(p);
         } else if (e.getButton() == MouseEvent.BUTTON3) {
             p = new SecondaryRealPoint(p.getX(), p.getY());
+            if (curve == null) {
+                curve = new CurvedLine(new ArrayList<>());
+            }
+            curve.getAllPoints().add(p);
         } else if (e.getButton() == MouseEvent.BUTTON2) {
             allCurvedLines.add(curve);
             curve = null;
         }
-        if (curve == null) {
-            curve = new CurvedLine(new ArrayList<>());
-        }
-        curve.getAllPoints().add(p);
         repaint();
     }
 
