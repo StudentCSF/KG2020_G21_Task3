@@ -1,4 +1,4 @@
-package course2.kg.task3;
+package course2.kg.task3.pixel_drawer;
 
 import java.awt.*;
 

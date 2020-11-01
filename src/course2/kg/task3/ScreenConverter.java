@@ -1,5 +1,8 @@
 package course2.kg.task3;
 
+import course2.kg.task3.point.RealPoint;
+import course2.kg.task3.point.ScreenPoint;
+
 public class ScreenConverter {
     private double xR, yR, wR, hR;
     private int wS, hS;
@@ -21,7 +24,7 @@ public class ScreenConverter {
 
     public RealPoint s2r(ScreenPoint p) {
         double x = p.getX() * wR / wS + xR;
-        double y = yR - p.getY() *hR / hS;
+        double y = yR - p.getY() * hR / hS;
         return new RealPoint(x, y);
     }
 

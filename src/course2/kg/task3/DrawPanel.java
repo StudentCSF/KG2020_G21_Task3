@@ -1,5 +1,15 @@
 package course2.kg.task3;
 
+import course2.kg.task3.curved_line.drawer.BezierCurvedLineDrawer;
+import course2.kg.task3.curved_line.CurvedLine;
+import course2.kg.task3.curved_line.drawer.CurvedLineDrawer;
+import course2.kg.task3.line.drawer.DDALineDrawer;
+import course2.kg.task3.line.Line;
+import course2.kg.task3.line.drawer.LineDrawer;
+import course2.kg.task3.pixel_drawer.BufferedImagePixelDrawer;
+import course2.kg.task3.pixel_drawer.PixelDrawer;
+import course2.kg.task3.point.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -10,6 +20,7 @@ import java.util.List;
 import java.util.Random;
 
 public class DrawPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
+
 
     public DrawPanel() {
         this.addMouseListener(this);
@@ -37,14 +48,10 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         DDALineDrawer ld = new DDALineDrawer(pd);
         CurvedLineDrawer bcld = new BezierCurvedLineDrawer(pd);
         //HermiteCurvedLineDrawer hcld = new HermiteCurvedLineDrawer(pd);
-        //Line l1 = new Line(0, 0, 4, 6);
-        //Line l2 = new Line(4, 7, 2, -9);
-        CurvedLine cl = new CurvedLine(new ArrayList<>(Arrays.asList(new BasicRealPoint(0, 0), new SecondaryRealPoint(1, 1), new SecondaryRealPoint(2, 0), new BasicRealPoint(2, -1), new SecondaryRealPoint(3, 0), new SecondaryRealPoint(4, -1), new BasicRealPoint(5, 2))));
+        //CurvedLine cl = new CurvedLine(new ArrayList<>(Arrays.asList(new BasicRealPoint(0, 0), new SecondaryRealPoint(1, 1), new SecondaryRealPoint(2, 0), new BasicRealPoint(2, -1), new SecondaryRealPoint(3, 0), new SecondaryRealPoint(4, -1), new BasicRealPoint(5, 2))));
+        CurvedLine cl = new CurvedLine(new ArrayList<>(Arrays.asList(new BasicRealPoint(-1, 0), new SecondaryRealPoint(-1, 1), new BasicRealPoint(0, 1), new SecondaryRealPoint(1, 1), new BasicRealPoint(1, 0), new SecondaryRealPoint(1, -1), new BasicRealPoint(0, -1), new SecondaryRealPoint(-1, -1), new BasicRealPoint(-1, 0))));
         //ld.drawBezierCurvedLine(new ScreenPoint(0, 0), new ScreenPoint(1, 1), new ScreenPoint(1, 2), new ScreenPoint(2, -2));
-        //bcld.drawLine(sc.r2s(cl.getP1()), sc.r2s(cl.getP2()), sc.r2s(cl.getP3()), sc.r2s(cl.getP4()));
-        //bcld.drawLine(sc.r2s(cl.getP1()), sc.r2s(cl.getP2()), sc.r2s(cl.getP3()), sc.r2s(cl.getP4()));
-        //hcld.drawLine(sc.r2s(cl.getP1()), sc.r2s(cl.getP2()), sc.r2s(cl.getP3()), sc.r2s(cl.getP4()));
-        //drawAll(ld);
+        drawAll(ld);
         //drawCurve(pd);
         drawCurve(cl, sc, bcld);
         g.drawImage(bi, 0, 0, null);
@@ -69,9 +76,9 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
 
     private void drawCurve(CurvedLine l, ScreenConverter sc, CurvedLineDrawer cld) {
         List<ScreenPoint> screenPointList = new ArrayList<>();
-        for (int i = 0; i < l.getPoints().size(); i++) {
-            boolean isBasic = l.getPoints().get(i) instanceof BasicRealPoint;
-            ScreenPoint sp = sc.r2s(l.getPoints().get(i));
+        for (int i = 0; i < l.getAllPoints().size(); i++) {
+            boolean isBasic = l.getAllPoints().get(i) instanceof BasicRealPoint;
+            ScreenPoint sp = sc.r2s(l.getAllPoints().get(i));
             if (isBasic) {
                 sp = new BasicScreenPoint(sp.getX(), sp.getY());
             } else {
@@ -79,7 +86,7 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
             }
             screenPointList.add(sp);
         }
-        cld.drawCurvedLine(screenPointList);
+        cld.draw(screenPointList);
     }
 
     private void drawAll(LineDrawer ld) {

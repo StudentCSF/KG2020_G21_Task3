@@ -1,4 +1,4 @@
-package course2.kg.task3;
+package course2.kg.task3.point;
 
 public class RealPoint {
     private double x, y;

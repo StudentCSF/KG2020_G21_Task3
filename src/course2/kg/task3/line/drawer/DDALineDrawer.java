@@ -1,4 +1,8 @@
-package course2.kg.task3;
+package course2.kg.task3.line.drawer;
+
+import course2.kg.task3.line.drawer.LineDrawer;
+import course2.kg.task3.pixel_drawer.PixelDrawer;
+import course2.kg.task3.point.ScreenPoint;
 
 import java.awt.*;
 import java.util.ArrayList;
