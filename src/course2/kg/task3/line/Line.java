@@ -1,9 +1,8 @@
 package course2.kg.task3.line;
 
-import course2.kg.task3.IFunction;
 import course2.kg.task3.point.RealPoint;
 
-public class Line implements IFunction {
+public class Line {
     private RealPoint p1, p2;
 
     public Line(RealPoint p1, RealPoint p2) {

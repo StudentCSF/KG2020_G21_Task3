@@ -5,15 +5,16 @@ import java.awt.*;
 
 public class MainWindow extends JFrame {
     private DrawPanel dp;
-   /* private JComboBox funcs = new JComboBox(new String[] {
-            "Прямые линии",
-            "Кривые Безье"
-    }
-    );*/
+
 
     public MainWindow() throws HeadlessException {
+        /*JComboBox funcs = new JComboBox(new String[]{
+                "Прямые линии",
+                "Кривые Безье"
+        }
+        );*/
         dp = new DrawPanel();
-        //this.add(funcs);
+
         this.add(dp);
     }
 }

@@ -37,10 +37,10 @@ public class BezierCurvedLineDrawer implements CurvedLineDrawer {
 
     private void drawFragment(List<ScreenPoint> pointsForFragment, Color c) {
         int size = pointsForFragment.size();
+        int[] coeffs = getBinomCoeffs(size - 1);
         for (double t = 0; t <= 1; t += step) {
             double x = 0;
             double y = 0;
-            int[] coeffs = getBinomCoeffs(size - 1);
             double mult2 = Math.pow(1 - t, size - 1);
             double mult3 = 1;
             for (int i = 0; i < size; i++) {
