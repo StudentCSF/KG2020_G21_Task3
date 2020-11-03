@@ -61,7 +61,7 @@ public class BezierCurvedLineDrawer implements CurvedLineDrawer {
 
     private int[] getBinomCoeffs(int degree) {
         int[] coeffs = new int[degree + 1];
-        for (int i = 0; i < coeffs.length; i++) {
+        for (int i = 0; i < coeffs.length / 2 + 1; i++) {
             int v = countCombination(degree, i);
             coeffs[i] = v;
             coeffs[coeffs.length - 1 - i] = v;

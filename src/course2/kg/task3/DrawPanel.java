@@ -11,7 +11,6 @@ import course2.kg.task3.pixel_drawer.PixelDrawer;
 import course2.kg.task3.point.*;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicBorders;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -35,6 +34,7 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
 
     private List<Line> allLines = new ArrayList<Line>();
     private List<CurvedLine> allCurvedLines = new ArrayList<>();
+    private List<Marker> markers = new ArrayList<>();
 
     @Override
     public void paint(Graphics g) {
@@ -53,61 +53,36 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         CurvedLine cl = new CurvedLine(new ArrayList<>(Arrays.asList(new BasicRealPoint(-1, 0), new SecondaryRealPoint(-1, 1), new BasicRealPoint(0, 1), new SecondaryRealPoint(1, 1), new BasicRealPoint(1, 0), new SecondaryRealPoint(1, -1), new BasicRealPoint(0, -1), new SecondaryRealPoint(-1, -1), new BasicRealPoint(-1, 0))));
         //drawAll(ld);
         //drawCurve(pd);
-        draw(bcld);
+        drawAll(bcld, ld);
         //drawCurve(cl, sc, bcld);
         g.drawImage(bi, 0, 0, null);
     }
 
-    private void draw(CurvedLineDrawer cld) {
+    private void drawAll(CurvedLineDrawer cld, LineDrawer ld) {
+        for (Marker m : markers) {
+            m.draw(ld, sc);
+        }
         for (CurvedLine l : allCurvedLines) {
-            List<ScreenPoint> screenPointList = new ArrayList<>();
-            if (l != null) {
-                for (int i = 0; i < l.getAllPoints().size(); i++) {
-                    boolean isBasic = l.getAllPoints().get(i) instanceof BasicRealPoint;
-                    ScreenPoint sp = sc.r2s(l.getAllPoints().get(i));
-                    if (isBasic) {
-                        sp = new BasicScreenPoint(sp.getX(), sp.getY());
-                    } else {
-                        sp = new SecondaryScreenPoint(sp.getX(), sp.getY());
-                        ;
-                    }
-                    screenPointList.add(sp);
-                }
-                cld.draw(screenPointList);
-            }
+            drawCurve(l, sc, cld);
         }
-    }
-
-    private void drawCurve(PixelDrawer pd) {
-        Random rnd = new Random();
-        CurvedLineDrawer bcld = new BezierCurvedLineDrawer(pd);
-        List<RealPoint> l = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
-            if (i == 0 || (i + 1) %  4 == 0) {
-                BasicRealPoint p = new BasicRealPoint(rnd.nextInt(10), rnd.nextInt(10));
-                l.add(p);
-            } else {
-                SecondaryRealPoint p = new SecondaryRealPoint(rnd.nextInt(10), rnd.nextInt(10));
-                l.add(p);
-            }
-        }
-        CurvedLine cl = new CurvedLine(l);
-        drawCurve(cl, sc, bcld);
     }
 
     private void drawCurve(CurvedLine l, ScreenConverter sc, CurvedLineDrawer cld) {
-        List<ScreenPoint> screenPointList = new ArrayList<>();
-        for (int i = 0; i < l.getAllPoints().size(); i++) {
-            boolean isBasic = l.getAllPoints().get(i) instanceof BasicRealPoint;
-            ScreenPoint sp = sc.r2s(l.getAllPoints().get(i));
-            if (isBasic) {
-                sp = new BasicScreenPoint(sp.getX(), sp.getY());
-            } else {
-                sp = new SecondaryScreenPoint(sp.getX(), sp.getY());;
+        if (l != null) {
+            List<ScreenPoint> screenPointList = new ArrayList<>();
+            for (int i = 0; i < l.getAllPoints().size(); i++) {
+                boolean isBasic = l.getAllPoints().get(i) instanceof BasicRealPoint;
+                ScreenPoint sp = sc.r2s(l.getAllPoints().get(i));
+                if (isBasic) {
+                    sp = new BasicScreenPoint(sp.getX(), sp.getY());
+                } else {
+                    sp = new SecondaryScreenPoint(sp.getX(), sp.getY());
+                    ;
+                }
+                screenPointList.add(sp);
             }
-            screenPointList.add(sp);
+            cld.draw(screenPointList);
         }
-        cld.draw(screenPointList);
     }
 
     private void drawAll(LineDrawer ld) {
@@ -125,9 +100,16 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
 
     private ScreenPoint lastPosition = null;
 
+    private Marker marker = null;
+
     @Override
     public void mouseClicked(MouseEvent e) {
         RealPoint p = sc.s2r(new ScreenPoint(e.getX(), e.getY()));
+        if (e.getButton() != MouseEvent.BUTTON2) {
+            marker = new Marker(p);
+            markers.add(marker);
+            marker = null;
+        }
         if (e.getButton() == MouseEvent.BUTTON1) {
             p = new BasicRealPoint(p.getX(), p.getY());
             if (curve == null) {
@@ -217,5 +199,22 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         sc.setwR(scale * sc.getwR());
         sc.sethR(scale * sc.gethR());
         repaint();
+    }
+
+    private void drawCurve(PixelDrawer pd) {
+        Random rnd = new Random();
+        CurvedLineDrawer bcld = new BezierCurvedLineDrawer(pd);
+        List<RealPoint> l = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            if (i == 0 || (i + 1) %  4 == 0) {
+                BasicRealPoint p = new BasicRealPoint(rnd.nextInt(10), rnd.nextInt(10));
+                l.add(p);
+            } else {
+                SecondaryRealPoint p = new SecondaryRealPoint(rnd.nextInt(10), rnd.nextInt(10));
+                l.add(p);
+            }
+        }
+        CurvedLine cl = new CurvedLine(l);
+        drawCurve(cl, sc, bcld);
     }
 }

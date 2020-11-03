@@ -6,7 +6,7 @@ import java.awt.*;
 import java.util.List;
 
 public interface CurvedLineDrawer {
-    static final double step = 0.0001;
+    double step = 0.0001;
 
     void draw(List<ScreenPoint> l);
     void draw(List<ScreenPoint> l, Color color);
