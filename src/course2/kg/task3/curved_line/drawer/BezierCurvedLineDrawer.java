@@ -1,8 +1,8 @@
 package course2.kg.task3.curved_line.drawer;
 
 import course2.kg.task3.pixel_drawer.PixelDrawer;
-import course2.kg.task3.point.BasicScreenPoint;
 import course2.kg.task3.point.ScreenPoint;
+import course2.kg.task3.point.SecondaryScreenPoint;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class BezierCurvedLineDrawer implements CurvedLineDrawer {
         List<ScreenPoint> pointsForFragment = new ArrayList<>();
         for (ScreenPoint curr : l) {
             pointsForFragment.add(curr);
-            if (curr instanceof BasicScreenPoint && pointsForFragment.size() > 1) {
+            if (!(curr instanceof SecondaryScreenPoint) && pointsForFragment.size() > 1) {
                 drawFragment(pointsForFragment, color);
                 if (l.indexOf(curr) != l.size() - 1) {
                     pointsForFragment = new ArrayList<>();

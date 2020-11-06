@@ -8,6 +8,11 @@ public class ScreenPoint {
         this.y = y;
     }
 
+    public ScreenPoint(ScreenPoint point) {
+        this.x = point.getX();
+        this.y = point.getY();
+    }
+
     public int getX()
     {
         return x;

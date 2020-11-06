@@ -8,6 +8,11 @@ public class RealPoint {
         this.y = y;
     }
 
+    public RealPoint(RealPoint point) {
+        this.x = point.getX();
+        this.y = point.getY();
+    }
+
     public double getX() {
         return x;
     }
