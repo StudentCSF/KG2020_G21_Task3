@@ -18,14 +18,12 @@ public class ScreenConverter extends PrimarySecondaryScreenConverter<CurvePoint<
     public ScreenPoint r2s(RealPoint p) {
         int x = (int)((p.getX() - xR) * wS / wR);
         int y = (int)((yR - p.getY()) * hS / hR);
-        //if (p instanceof SecondaryRealPoint) return new SecondaryScreenPoint(x, y);
         return new ScreenPoint(x, y);
     }
 
     public RealPoint s2r(ScreenPoint p) {
         double x = p.getX() * wR / wS + xR;
         double y = yR - p.getY() * hR / hS;
-        //if (p instanceof SecondaryScreenPoint) return new SecondaryRealPoint(x, y);
         return new RealPoint(x, y);
     }
 
