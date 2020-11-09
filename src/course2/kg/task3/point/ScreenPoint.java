@@ -1,6 +1,6 @@
 package course2.kg.task3.point;
 
-public class ScreenPoint {
+public class ScreenPoint extends AbstractPoint {
     private int x, y;
 
     public ScreenPoint(int x, int y) {

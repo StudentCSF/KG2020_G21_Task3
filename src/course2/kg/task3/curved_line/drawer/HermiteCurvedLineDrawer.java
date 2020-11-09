@@ -7,7 +7,7 @@ import course2.kg.task3.point.ScreenPoint;
 import java.awt.*;
 import java.util.List;
 
-public class HermiteCurvedLineDrawer implements CurvedLineDrawer {
+public class HermiteCurvedLineDrawer/* implements CurvedLineDrawer*/ {
     private PixelDrawer pd;
     private double step = 0.00001;
 
@@ -29,7 +29,7 @@ public class HermiteCurvedLineDrawer implements CurvedLineDrawer {
             pd.colorPixel((int) x, (int) y, Color.BLACK);
         }
     }
-
+/*
     @Override
     public void draw(List<ScreenPoint> l) {
 
@@ -38,5 +38,5 @@ public class HermiteCurvedLineDrawer implements CurvedLineDrawer {
     @Override
     public void draw(List<ScreenPoint> l, Color color) {
 
-    }
+    }*/
 }

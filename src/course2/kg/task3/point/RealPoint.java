@@ -1,6 +1,6 @@
 package course2.kg.task3.point;
 
-public class RealPoint {
+public class RealPoint extends AbstractPoint {
     private double x, y;
 
     public RealPoint(double x, double y) {

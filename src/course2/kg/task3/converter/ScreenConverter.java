@@ -1,8 +1,8 @@
-package course2.kg.task3;
+package course2.kg.task3.converter;
 
 import course2.kg.task3.point.*;
 
-public class ScreenConverter {
+public class ScreenConverter extends PrimarySecondaryScreenConverter<CurvePoint<RealPoint>, CurvePoint<ScreenPoint>> {
     private double xR, yR, wR, hR;
     private int wS, hS;
 
@@ -18,14 +18,14 @@ public class ScreenConverter {
     public ScreenPoint r2s(RealPoint p) {
         int x = (int)((p.getX() - xR) * wS / wR);
         int y = (int)((yR - p.getY()) * hS / hR);
-        if (p instanceof SecondaryRealPoint) return new SecondaryScreenPoint(x, y);
+        //if (p instanceof SecondaryRealPoint) return new SecondaryScreenPoint(x, y);
         return new ScreenPoint(x, y);
     }
 
     public RealPoint s2r(ScreenPoint p) {
         double x = p.getX() * wR / wS + xR;
         double y = yR - p.getY() * hR / hS;
-        if (p instanceof SecondaryScreenPoint) return new SecondaryRealPoint(x, y);
+        //if (p instanceof SecondaryScreenPoint) return new SecondaryRealPoint(x, y);
         return new RealPoint(x, y);
     }
 
@@ -75,5 +75,16 @@ public class ScreenConverter {
 
     public void sethS(int hS) {
         this.hS = hS;
+    }
+
+
+    @Override
+    public CurvePoint<ScreenPoint> convertToB(CurvePoint<RealPoint> a) {
+        return new CurvePoint<>(this.r2s(a.getPoint()), a.isPrimary());
+    }
+
+    @Override
+    public CurvePoint<RealPoint> convertToA(CurvePoint<ScreenPoint> b) {
+        return new CurvePoint<>(this.s2r(b.getPoint()), b.isPrimary());
     }
 }
