@@ -61,6 +61,25 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         g.drawImage(bi, 0, 0, null);
     }
 
+    CurvedLine start = null;
+    CurvedLine end = null;
+
+    private void animation() {
+        if (start != null && end != null && canAnimated(start, end)) {
+
+        }
+    }
+
+    private boolean canAnimated(CurvedLine l1, CurvedLine l2) {
+        if (l1.getAllPoints().size() != l2.getAllPoints().size()) return false;
+        List<CurvePoint<RealPoint>> pts1 = l1.getAllPoints();
+        List<CurvePoint<RealPoint>> pts2 = l2.getAllPoints();
+        for (int i = 0; i < pts1.size(); i++) {
+            if (pts1.get(i).isPrimary() && pts2.get(i).isSecondary() || pts1.get(i).isSecondary() && pts2.get(i).isPrimary()) return false;
+        }
+        return true;
+    }
+
     private void drawAll(CurvedLineDrawer cld, LineDrawer ld) {
         //List<CurvedLine> error = new ArrayList<>();
         for (CurvedLine l : allCurvedLines) {
