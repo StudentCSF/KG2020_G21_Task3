@@ -12,7 +12,7 @@ public class MathUtils {
         return coeffs;
     }
 
-    public static int countCombination(int n, int k) {
+    private static int countCombination(int n, int k) {
         int res = 1;
         for (int i = k + 1; i <= n; i++) {
             res *= i;

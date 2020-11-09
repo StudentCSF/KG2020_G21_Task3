@@ -42,7 +42,6 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         sc.sethS(getHeight());
         sc.setwS(getWidth());
         step = sc.gethR() / 40000;
-        //sc.sethR(getHeight() * sc.getwR() / getWidth());
         BufferedImage bi = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D gr = bi.createGraphics();
         gr.setColor(Color.WHITE);
@@ -51,13 +50,8 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         PixelDrawer pd = new BufferedImagePixelDrawer(bi);
         DDALineDrawer ld = new DDALineDrawer(pd);
         CurvedLineDrawer bcld = new BezierCurvedLineDrawer(pd);
-        //HermiteCurvedLineDrawer hcld = new HermiteCurvedLineDrawer(pd);
-        //CurvedLine cl = new CurvedLine(new ArrayList<>(Arrays.asList(new BasicRealPoint(0, 0), new SecondaryRealPoint(1, 1), new SecondaryRealPoint(2, 0), new BasicRealPoint(2, -1), new SecondaryRealPoint(3, 0), new SecondaryRealPoint(4, -1), new BasicRealPoint(5, 2))));
-        //CurvedLine cl = new CurvedLine(new ArrayList<>(Arrays.asList(new RealPoint(-1, 0), new SecondaryRealPoint(-1, 1), new RealPoint(0, 1), new SecondaryRealPoint(1, 1), new RealPoint(1, 0), new SecondaryRealPoint(1, -1), new RealPoint(0, -1), new SecondaryRealPoint(-1, -1), new RealPoint(-1, 0))));
         drawAll(ld);
-        //drawCurve(pd);
         drawAll(bcld, ld);
-        //drawCurve(cl, sc, bcld);
         g.drawImage(bi, 0, 0, null);
     }
 
@@ -81,20 +75,10 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
     }
 
     private void drawAll(CurvedLineDrawer cld, LineDrawer ld) {
-        //List<CurvedLine> error = new ArrayList<>();
         for (CurvedLine l : allCurvedLines) {
-            /*if (l.getAllPoints().get(0) instanceof SecondaryRealPoint || l.getAllPoints().get(l.getAllPoints().size() - 1) instanceof SecondaryRealPoint) {
-                //allCurvedLines.;
-                error.add(l);
-                continue;
-            }*/
-            /*for (RealPoint p : l.getAllPoints()) {
-                drawMarker(p, cld);
-            }*/
             drawCurve(l, sc, cld);
         }
         if (selectedCurve != null) drawMarkers(cld);
-        //allCurvedLines.removeAll(error);
     }
 
     private void drawCurve(CurvedLine l, ScreenConverter sc, CurvedLineDrawer cld) {
@@ -121,8 +105,6 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         ld.drawLine(sc.r2s(l.getP1()), sc.r2s(l.getP2()));
     }
 
-    //RealPoint ptr = null;
-
     private void change(ScreenPoint point) {
         RealPoint p = sc.s2r(point);
         double r = sc.gethR() / sc.gethS() * 4;
@@ -141,7 +123,6 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
     }
 
     private CurvedLine selectedCurve = null;
-    //private CurvedLine curveForRemove = null;
 
     private void drawMarkers(CurvedLineDrawer cld) {
         if (selectedCurve != null) {
@@ -167,10 +148,8 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
     }
 
     private CurvedLine checkClick(ScreenPoint p) {
-        //RealPoint point = sc.s2r(p);
         for (CurvedLine line : allCurvedLines) {
             if (isBelong(line, p)) {
-                //selectedCurve = line;
                 return line;
             }
         }
@@ -244,7 +223,7 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
                     if (allCurvedLines.indexOf(curveForRemove) == allCurvedLines.indexOf(selectedCurve)) selectedCurve = null;
                     allCurvedLines.remove(curveForRemove);
                 } else {
-                    p = new CurvePoint<>(sc.s2r(new SecondaryScreenPoint(e.getX(), e.getY())), false);
+                    p = new CurvePoint<>(sc.s2r(new ScreenPoint(e.getX(), e.getY())), false);
                 }
             } else if (e.getButton() == MouseEvent.BUTTON1) {
                 selectedCurve = checkClick(new ScreenPoint(e.getX(), e.getY()));
@@ -337,32 +316,10 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         for (int i = Math.abs(clicks); (clicks < 0 && sc.gethR() > 1 || clicks > 0 && sc.gethR() < 20) && i > 0; i--) {
             scale *= step;
         }
-        /*RealPoint p = sc.s2r(new ScreenPoint(e.getX(), e.getY()));
-        sc.setxR(p.getX() - sc.getwR());
-        sc.setyR(p.getY() - sc.gethR());*/
         double oldWR = sc.getwR();
         double oldHR = sc.gethR();
         sc.setwR(scale * oldWR);
         sc.sethR(scale * oldHR);
-        //sc.setxR(sc.getxR() + (oldWR - sc.getwR()) / 2);
-        //sc.setyR(sc.getyR() + (oldHR - sc.gethR()) / 2);
         repaint();
     }
-
-    /*private void drawCurve(PixelDrawer pd) {
-        Random rnd = new Random();
-        CurvedLineDrawer bcld = new BezierCurvedLineDrawer(pd);
-        List<RealPoint> l = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
-            if (i == 0 || (i + 1) % 4 == 0) {
-                RealPoint p = new RealPoint(rnd.nextInt(5), rnd.nextInt(5));
-                l.add(p);
-            } else {
-                RealPoint p = new SecondaryRealPoint(rnd.nextInt(5), rnd.nextInt(5));
-                l.add(p);
-            }
-        }
-        CurvedLine cl = new CurvedLine(l);
-        drawCurve(cl, sc, bcld);
-    }*/
 }

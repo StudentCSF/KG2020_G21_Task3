@@ -3,7 +3,6 @@ package course2.kg.task3.curved_line.drawer;
 import course2.kg.task3.pixel_drawer.PixelDrawer;
 import course2.kg.task3.point.CurvePoint;
 import course2.kg.task3.point.ScreenPoint;
-import course2.kg.task3.point.SecondaryScreenPoint;
 import course2.kg.task3.utils.MathUtils;
 
 import java.awt.*;
