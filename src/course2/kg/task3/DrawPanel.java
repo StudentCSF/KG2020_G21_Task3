@@ -50,18 +50,62 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         PixelDrawer pd = new BufferedImagePixelDrawer(bi);
         DDALineDrawer ld = new DDALineDrawer(pd);
         CurvedLineDrawer bcld = new BezierCurvedLineDrawer(pd);
-        drawAll(ld);
-        drawAll(bcld, ld);
+        //drawAll(ld);
+        drawAll(bcld);
+        animation(bcld);
         g.drawImage(bi, 0, 0, null);
     }
 
-    CurvedLine start = null;
-    CurvedLine end = null;
+    private CurvedLine start = null;
+    private CurvedLine end = null;
+    private CurvedLine curr = null;
+    private double animStep = 0.01;
 
-    private void animation() {
-        if (start != null && end != null && canAnimated(start, end)) {
-
+    public void animation(CurvedLineDrawer cld) {
+        if (start != null && end != null) {
+            if (!isSame(start, end)) {
+                countCurrentCurve();
+                if (curr != null) {
+                    drawCurve(curr, cld);
+                    start = curr;
+                }
+            } else {
+                start = null;
+                end = null;
+                curr = null;
+            }
         }
+        repaint();
+    }
+
+    private void countCurrentCurve() {
+        if (start != null && end != null && canAnimated(start, end)) {
+            List<CurvePoint<RealPoint>> pointsForCurrentCurve = new ArrayList<>();
+            for (int i = 0; i < start.getAllPoints().size(); i++) {
+                double sx = start.getAllPoints().get(i).getPoint().getX();
+                double ex = end.getAllPoints().get(i).getPoint().getX();
+                double x = sx + animStep * Math.signum(ex - sx);
+                double sy = start.getAllPoints().get(i).getPoint().getY();
+                double ey = end.getAllPoints().get(i).getPoint().getY();
+                double y = sy + animStep * Math.signum(ey - sy);
+                boolean isPrim = start.getAllPoints().get(i).isPrimary();
+                pointsForCurrentCurve.add(new CurvePoint<>(new RealPoint(x, y), isPrim));
+            }
+            curr = new CurvedLine(pointsForCurrentCurve);
+        }
+    }
+
+    private boolean isSame(CurvedLine l1, CurvedLine l2) {
+        if (l1.getAllPoints().size() != l2.getAllPoints().size()) return false;
+        for (int i = 0; i < l1.getAllPoints().size(); i++) {
+            CurvePoint<RealPoint> p1 = l1.getAllPoints().get(i);
+            CurvePoint<RealPoint> p2 = l2.getAllPoints().get(i);
+            if (Math.abs(p1.getPoint().getX() - p2.getPoint().getX()) > animStep
+                    || Math.abs(p1.getPoint().getY() - p2.getPoint().getY()) > animStep
+                    || p1.isPrimary() && p2.isSecondary()
+                    || p2.isPrimary() && p1.isSecondary()) return false;
+        }
+        return true;
     }
 
     private boolean canAnimated(CurvedLine l1, CurvedLine l2) {
@@ -69,19 +113,20 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         List<CurvePoint<RealPoint>> pts1 = l1.getAllPoints();
         List<CurvePoint<RealPoint>> pts2 = l2.getAllPoints();
         for (int i = 0; i < pts1.size(); i++) {
-            if (pts1.get(i).isPrimary() && pts2.get(i).isSecondary() || pts1.get(i).isSecondary() && pts2.get(i).isPrimary()) return false;
+            if (pts1.get(i).isPrimary() && pts2.get(i).isSecondary() || pts1.get(i).isSecondary() && pts2.get(i).isPrimary())
+                return false;
         }
         return true;
     }
 
-    private void drawAll(CurvedLineDrawer cld, LineDrawer ld) {
+    private void drawAll(CurvedLineDrawer cld) {
         for (CurvedLine l : allCurvedLines) {
-            drawCurve(l, sc, cld);
+            drawCurve(l, cld);
         }
         if (selectedCurve != null) drawMarkers(cld);
     }
 
-    private void drawCurve(CurvedLine l, ScreenConverter sc, CurvedLineDrawer cld) {
+    private void drawCurve(CurvedLine l, CurvedLineDrawer cld) {
         if (l != null) {
             List<CurvePoint<ScreenPoint>> screenPointList = new ArrayList<>();
             for (int i = 0; i < l.getAllPoints().size(); i++) {
@@ -213,14 +258,21 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON2) {
-            if (curve != null && curve.getAllPoints().get(curve.getAllPoints().size() - 1).isSecondary()) allCurvedLines.remove(curve);
+            CurvedLine cl = checkClick(new ScreenPoint(e.getX(), e.getY()));
+            if (selectedCurve != null && cl != null) {
+                start = selectedCurve;
+                end = cl;
+            }
+            if (curve != null && curve.getAllPoints().get(curve.getAllPoints().size() - 1).isSecondary())
+                allCurvedLines.remove(curve);
             curve = null;
         } else {
             CurvePoint<RealPoint> p = null;
             if (e.getButton() == MouseEvent.BUTTON3) {
                 CurvedLine curveForRemove = checkClick(new ScreenPoint(e.getX(), e.getY()));
                 if (curveForRemove != null) {
-                    if (allCurvedLines.indexOf(curveForRemove) == allCurvedLines.indexOf(selectedCurve)) selectedCurve = null;
+                    if (allCurvedLines.indexOf(curveForRemove) == allCurvedLines.indexOf(selectedCurve))
+                        selectedCurve = null;
                     allCurvedLines.remove(curveForRemove);
                 } else {
                     p = new CurvePoint<>(sc.s2r(new ScreenPoint(e.getX(), e.getY())), false);

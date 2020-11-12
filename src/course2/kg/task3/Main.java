@@ -1,6 +1,5 @@
 package course2.kg.task3;
 
-
 import javax.swing.*;
 
 public class Main {
