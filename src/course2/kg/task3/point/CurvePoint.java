@@ -1,29 +1,19 @@
 package course2.kg.task3.point;
 
 
-public class CurvePoint<T extends AbstractPoint> {
-    private T point;
-    private boolean isPrimary;
+import course2.kg.task3.utils.PrimarySecondaryContainer;
+
+public class CurvePoint<T extends AbstractPoint> extends PrimarySecondaryContainer<T> {
 
     public CurvePoint(T point, boolean isPrimary) {
-        this.point = point;
-        this.isPrimary = isPrimary;
+        super(point, isPrimary);
     }
 
-    public CurvePoint(CurvePoint<T> other) {
-        this.point = other.getPoint();
-        this.isPrimary = other.isPrimary();
+    public CurvePoint(PrimarySecondaryContainer<T> other) {
+        super(other);
     }
 
     public T getPoint() {
-        return point;
-    }
-
-    public boolean isPrimary() {
-        return isPrimary;
-    }
-
-    public boolean isSecondary() {
-        return !isPrimary;
+        return getValue();
     }
 }
