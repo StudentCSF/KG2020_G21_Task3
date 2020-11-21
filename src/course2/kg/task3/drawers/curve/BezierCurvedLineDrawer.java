@@ -1,9 +1,7 @@
-package course2.kg.task3.curved_line.drawer;
+package course2.kg.task3.drawers.curve;
 
-import course2.kg.task3.converter.ScreenConverter;
-import course2.kg.task3.pixel_drawer.PixelDrawer;
+import course2.kg.task3.drawers.pixel.PixelDrawer;
 import course2.kg.task3.point.CurvePoint;
-import course2.kg.task3.point.RealPoint;
 import course2.kg.task3.point.ScreenPoint;
 import course2.kg.task3.utils.MathUtils;
 

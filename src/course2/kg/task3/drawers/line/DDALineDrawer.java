@@ -1,11 +1,12 @@
-package course2.kg.task3.line.drawer;
+package course2.kg.task3.drawers.line;
 
-import course2.kg.task3.pixel_drawer.PixelDrawer;
+import course2.kg.task3.drawers.line.dotted.DottedLineDrawer;
+import course2.kg.task3.drawers.pixel.PixelDrawer;
 import course2.kg.task3.point.ScreenPoint;
 
 import java.awt.*;
 
-public class DDALineDrawer implements LineDrawer {
+public class DDALineDrawer implements LineDrawer, DottedLineDrawer {
     private PixelDrawer pd;
 
     public DDALineDrawer(PixelDrawer pd) {

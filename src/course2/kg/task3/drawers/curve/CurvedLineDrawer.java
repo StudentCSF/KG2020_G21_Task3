@@ -1,4 +1,4 @@
-package course2.kg.task3.curved_line.drawer;
+package course2.kg.task3.drawers.curve;
 
 import course2.kg.task3.point.CurvePoint;
 import course2.kg.task3.point.ScreenPoint;

@@ -1,14 +1,15 @@
 package course2.kg.task3;
 
 import course2.kg.task3.converter.ScreenConverter;
-import course2.kg.task3.curved_line.drawer.BezierCurvedLineDrawer;
+import course2.kg.task3.drawers.curve.BezierCurvedLineDrawer;
 import course2.kg.task3.curved_line.CurvedLine;
-import course2.kg.task3.curved_line.drawer.CurvedLineDrawer;
-import course2.kg.task3.line.drawer.DDALineDrawer;
+import course2.kg.task3.drawers.curve.CurvedLineDrawer;
+import course2.kg.task3.drawers.line.DDALineDrawer;
+import course2.kg.task3.drawers.line.dotted.DottedLineDrawer;
 import course2.kg.task3.line.Line;
-import course2.kg.task3.line.drawer.LineDrawer;
-import course2.kg.task3.pixel_drawer.BufferedImagePixelDrawer;
-import course2.kg.task3.pixel_drawer.PixelDrawer;
+import course2.kg.task3.drawers.line.LineDrawer;
+import course2.kg.task3.drawers.pixel.BufferedImagePixelDrawer;
+import course2.kg.task3.drawers.pixel.PixelDrawer;
 import course2.kg.task3.point.*;
 import course2.kg.task3.utils.MathUtils;
 
@@ -55,7 +56,8 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         DDALineDrawer ld = new DDALineDrawer(pd);
         CurvedLineDrawer bcld = new BezierCurvedLineDrawer(pd);
         drawAll(ld);
-        drawAll(bcld, ld);
+        DottedLineDrawer dld = new DDALineDrawer(pd);
+        drawAll(bcld, dld);
         animation(bcld);
         g.drawImage(bi, 0, 0, null);
     }
@@ -125,11 +127,11 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         return true;
     }
 
-    private void drawAll(CurvedLineDrawer cld, LineDrawer ld) {
+    private void drawAll(CurvedLineDrawer cld, DottedLineDrawer dld) {
         for (CurvedLine l : allCurvedLines) {
             drawCurve(l, cld);
         }
-        if (selectedCurve != null)  drawMarkers(cld, ld);
+        if (selectedCurve != null)  drawMarkers(cld, dld);
     }
 
     private void drawCurve(CurvedLine l, CurvedLineDrawer cld) {
@@ -175,7 +177,7 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
 
     private CurvedLine selectedCurve = null;
 
-    private void drawMarkers(CurvedLineDrawer cld, LineDrawer ld) {
+    private void drawMarkers(CurvedLineDrawer cld, DottedLineDrawer dld) {
         if (selectedCurve != null) {
             double a = sc.gethR() / sc.gethS() * 4;
             double b = a * sc.gethS() / sc.getwS() * 2;
@@ -186,7 +188,7 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
                 RealPoint p = curr.getPoint();
                 drawMarker(p, a, b, cld);
                 if (flag && i > 0 && i < selectedCurve.getAllPoints().size()) {
-                    ld.drawDottedLine(sc.r2s(tmp), sc.r2s(p));
+                    dld.drawDottedLine(sc.r2s(tmp), sc.r2s(p));
                 }
                 tmp = p;
                 i++;
@@ -228,7 +230,7 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
 
     private List<ScreenPoint> getAllScreenPointsOFLine(CurvedLine l) {
         List<ScreenPoint> list = new ArrayList<>();
-        LinkedList<ScreenPoint> subList = new LinkedList<>();
+        List<ScreenPoint> subList = new LinkedList<>();
         for (CurvePoint<RealPoint> curr : l.getAllPoints()) {
             ScreenPoint point = sc.r2s(curr.getPoint());
             subList.add(point);
@@ -243,7 +245,7 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         return list;
     }
 
-    private void addPoints(List<ScreenPoint> list, LinkedList<ScreenPoint> subList) {
+    private void addPoints(List<ScreenPoint> list, List<ScreenPoint> subList) {
         int[] coeffs = MathUtils.getBinomCoeffs(subList.size() - 1);
         for (double t = 0; t <= 1; t += step) {
             double x = 0;
