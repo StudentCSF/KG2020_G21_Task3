@@ -5,7 +5,7 @@ import course2.kg.task3.drawers.curve.BezierCurvedLineDrawer;
 import course2.kg.task3.curved_line.CurvedLine;
 import course2.kg.task3.drawers.curve.CurvedLineDrawer;
 import course2.kg.task3.drawers.line.DDALineDrawer;
-import course2.kg.task3.drawers.line.dotted.DottedLineDrawer;
+import course2.kg.task3.drawers.line.DottedLineDrawer;
 import course2.kg.task3.line.Line;
 import course2.kg.task3.drawers.line.LineDrawer;
 import course2.kg.task3.drawers.pixel.BufferedImagePixelDrawer;
@@ -28,7 +28,7 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
         this.addMouseWheelListener(this);
-       // this.addKeyListener(this);
+        // this.addKeyListener(this);
         this.setFocusable(true);
     }
 
@@ -53,10 +53,10 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         gr.fillRect(0, 0, getWidth(), getHeight());
         gr.dispose();
         PixelDrawer pd = new BufferedImagePixelDrawer(bi);
-        DDALineDrawer ld = new DDALineDrawer(pd);
+        LineDrawer ld = new DDALineDrawer(pd);
         CurvedLineDrawer bcld = new BezierCurvedLineDrawer(pd);
         drawAll(ld);
-        DottedLineDrawer dld = new DDALineDrawer(pd);
+        LineDrawer dld = new DottedLineDrawer(pd);
         drawAll(bcld, dld);
         animation(bcld);
         g.drawImage(bi, 0, 0, null);
@@ -70,37 +70,22 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
 
     public void animation(CurvedLineDrawer cld) {
         if (start != null && end != null) {
-            if (canAnimated(start, end) && (System.currentTimeMillis() - currTime) < time) {
-                CurvedLine curr = countCurrentCurve();
+            if ((System.currentTimeMillis() - currTime) < time) {
+                double s = (System.currentTimeMillis() - currTime) / time;
+                CurvedLine curr = CurveUtils.countCurrentCurve(start, end, s);
                 if (curr != null) {
                     drawCurve(curr, cld);
+                } else {
+                    start = end = null;
+                    time = currTime = -1;
                 }
             } else {
-                start = null;
-                end = null;
-                currTime = time = -1;
+                start = end = null;
+                time = currTime = -1;
             }
         }
-        /*if (animFlag) */repaint();
-    }
-
-    private CurvedLine countCurrentCurve() {
-        double s = (System.currentTimeMillis() - currTime) / time;
-        if (start != null && end != null && canAnimated(start, end)) {
-            List<CurvePoint<RealPoint>> pointsForCurrentCurve = new ArrayList<>();
-            for (int i = 0; i < start.getAllPoints().size(); i++) {
-                double sx = start.getAllPoints().get(i).getPoint().getX();
-                double ex = end.getAllPoints().get(i).getPoint().getX();
-                double x = sx + (ex - sx) * s;
-                double sy = start.getAllPoints().get(i).getPoint().getY();
-                double ey = end.getAllPoints().get(i).getPoint().getY();
-                double y = sy + s * (ey - sy);
-                boolean isPrim = start.getAllPoints().get(i).isPrimary();
-                pointsForCurrentCurve.add(new CurvePoint<>(new RealPoint(x, y), isPrim));
-            }
-            return new CurvedLine(pointsForCurrentCurve);
-        }
-        return null;
+        /*if (animFlag) */
+        repaint();
     }
 
     /*private boolean isSame(CurvedLine l1, CurvedLine l2) {
@@ -116,22 +101,12 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         return true;
     }*/
 
-    private boolean canAnimated(CurvedLine l1, CurvedLine l2) {
-        if (l1.getAllPoints().size() != l2.getAllPoints().size()) return false;
-        List<CurvePoint<RealPoint>> pts1 = l1.getAllPoints();
-        List<CurvePoint<RealPoint>> pts2 = l2.getAllPoints();
-        for (int i = 0; i < pts1.size(); i++) {
-            if (pts1.get(i).isPrimary() && pts2.get(i).isSecondary() || pts1.get(i).isSecondary() && pts2.get(i).isPrimary())
-                return false;
-        }
-        return true;
-    }
 
-    private void drawAll(CurvedLineDrawer cld, DottedLineDrawer dld) {
+    private void drawAll(CurvedLineDrawer cld, LineDrawer dld) {
         for (CurvedLine l : allCurvedLines) {
             drawCurve(l, cld);
         }
-        if (selectedCurve != null)  drawMarkers(cld, dld);
+        if (selectedCurve != null) drawMarkers(cld, dld);
     }
 
     private void drawCurve(CurvedLine l, CurvedLineDrawer cld) {
@@ -177,7 +152,7 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
 
     private CurvedLine selectedCurve = null;
 
-    private void drawMarkers(CurvedLineDrawer cld, DottedLineDrawer dld) {
+    private void drawMarkers(CurvedLineDrawer cld, LineDrawer dld) {
         if (selectedCurve != null) {
             double a = sc.gethR() / sc.gethS() * 4;
             double b = a * sc.gethS() / sc.getwS() * 2;
@@ -188,7 +163,7 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
                 RealPoint p = curr.getPoint();
                 drawMarker(p, a, b, cld);
                 if (flag && i > 0 && i < selectedCurve.getAllPoints().size()) {
-                    dld.drawDottedLine(sc.r2s(tmp), sc.r2s(p));
+                    dld.drawLine(sc.r2s(tmp), sc.r2s(p));
                 }
                 tmp = p;
                 i++;
@@ -276,10 +251,11 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON2) {
             CurvedLine cl = checkClick(new ScreenPoint(e.getX(), e.getY()));
-            if (selectedCurve != null && cl != null) {
+            String text = this.animTime.getText();
+            if (selectedCurve != null && cl != null && text.matches("[0-9]+")) {
                 start = selectedCurve;
                 end = cl;
-                time = Integer.parseInt(String.valueOf(this.animTime.getText())) * 1000;
+                time = Integer.parseInt(text) * 1000;
                 currTime = System.currentTimeMillis();
             }
             if (curve != null && curve.getAllPoints().get(curve.getAllPoints().size() - 1).isSecondary())
