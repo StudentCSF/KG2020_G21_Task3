@@ -158,17 +158,24 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
             double b = a * sc.gethS() / sc.getwS() * 2;
             int i = 0;
             RealPoint tmp = null;
-            boolean flag = selectedCurve.getAllPoints().size() > 2;
+            boolean flag = isBrokenLine(selectedCurve);
             for (CurvePoint<RealPoint> curr : selectedCurve.getAllPoints()) {
                 RealPoint p = curr.getPoint();
                 drawMarker(p, a, b, cld);
-                if (flag && i > 0 && i < selectedCurve.getAllPoints().size()) {
+                if (!flag && i > 0 && i < selectedCurve.getAllPoints().size()) {
                     dld.drawLine(sc.r2s(tmp), sc.r2s(p));
                 }
                 tmp = p;
                 i++;
             }
         }
+    }
+
+    private boolean isBrokenLine(CurvedLine l) {
+        for (CurvePoint<RealPoint> curr : l.getAllPoints()) {
+            if (curr.isSecondary()) return false;
+        }
+        return true;
     }
 
     private void drawMarker(RealPoint p, double a, double b, CurvedLineDrawer cld) {
